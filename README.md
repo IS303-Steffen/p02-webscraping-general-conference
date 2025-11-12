@@ -46,7 +46,7 @@ If they enter `1` or `2`, do the following:
     - The “kicker” (the quote in different font before the main text)
     - The **number of times each book of scripture** is listed in the references side panel.
         - This is accessed by clicking the "Related Content" button (the one with some dots and lines) near the top right.
-        - Every time a book of scripture is mentioned (for example, "1 Nephi" increase the count for that book of scripture)
+        - Every time a book of scripture is mentioned (for example, "1 Nephi") increase the count for that book of scripture.
         - Some talks don't have any "Related Content". Make sure you still grab the speaker's name, title and kicker for those pages though.
 4. Store the aformentioned info in a copy of the `std_works` dictionary that is provided to you
     - For each talk, create a copy of the dictionary: `std_works_copy = std_works.copy()`
@@ -138,7 +138,7 @@ The talk(s) that quoted the Doctrine and Covenants the most:
     - If you are having trouble isolating the `<a>` elements you need, consider first locating a parent element that encapsulates the section that has all the talk links, but leaves out the other stuff (like the navigation banner at the top of the page, etc.).
     - (Optional) Print something like `trying to scrape url: {url}` before loading a specific page for debugging and visibility. That way if your code crashes, at least you can tell which page it crashed on by checking what last printed in the terminal.
 3. & 4. Scraping the info
-    - Use `.locator()` liberally. Remember `.text_content()` will get you the actual text from an element.
+    - Once you've accessed the page for an individual talk, use `.locator()` liberally. Remember `.text_content()` will get you the actual text from an element.
     - Make a copy of the dictionary I give you using `std_works_copy = std_works.copy()`. That way, you aren't overwriting any data you scraped when you get to a new page. To ensure the data is saved, make sure you append the `std_works_copy` dictionary to a list before going to the next page.
     - **Speaker Name**
         - Store the string as the value to `std_works_copy["Speaker_Name"]`.
