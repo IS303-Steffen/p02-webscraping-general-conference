@@ -1,6 +1,6 @@
 #### Project 02
 # Webscraping General Conference
-- This is a team project. Through GitHub Classroom you should have created a shared GitHub repository with your teammates. As long as you upload your finished code to that team repository, each team member will get credit. You will also need to fill out a peer review survey on Learning Suite to recieve credit (if you're in a team by yourself, you don't need to).
+- This is a team project. Through GitHub Classroom you should have created a shared GitHub repository with your teammates. As long as you upload your finished code to that team repository, each team member will get credit. You will also need to fill out [this peer review survey](https://forms.gle/wJoLugLVaFNYrCdE7) to recieve credit (if you're in a team by yourself, you don't need to).
 - I do not provide automated tests for projects. You will need to determine yourself whether the code meets the requirements provided in the rubric. It is important for you to be able to determine whether a program you write meets requirements (in the real world there won't be pre-written tests to tell you if you did your job right).
   - The disadvantage is that it takes some time to grade your assignment. After you turn in your code, your code will be manually graded (meaning partial credit may be given for certain requirements). The TAs will update the `RUBRIC.md` file with your grade and any comments that they have. Give us about 2 weeks after the due date to get the grades in.
 - For this project you will web scrape the talks from General Conference of The Church of Jesus Christ of Latter-day Saints, which you can find [here](https://www.churchofjesuschrist.org/study/general-conference/2025/10?lang=eng). For those that aren’t members of the church, general conference is when church leaders give talks (speeches) about different topics to the whole world. Talks have a title and a speaker, and typically there are many references to books of scripture (among other things). Your team's task is to scrape the name of the talk, the speaker, as well as the number of references to each book of scripture in each talk. You can watch a video of me walking through what you'll scrape [here](https://www.youtube.com/watch?v=nmkdnwjX_N0).
@@ -8,6 +8,7 @@
 > **Note:** Currently, the project requires scraping just the **October 2025** general conference. This is because there are a couple of quirks (some talks not making any references to external sources) that make the scraping task a little more complicated, which is great practice for other realistic scraping tasks.
 
 ## Libraries Required
+- If you are using a virtual environment, you can install all necessary external libraries by running `pip install -r requirements.txt` in the terminal.
 - `playwright`
 - `pandas`
 - `openpyxl`
@@ -16,7 +17,7 @@
 ## Logical Flow
 There are many ways to do this project, and all that matters is that you fulfill the requirements.
 
-After the logical flow section, you’ll find suggestions and hints for completing the project. You don't need to follow those suggestions, but I highly recommend reading through it.
+After the logical flow section, you’ll find suggestions and hints for completing the project. *You don't need to follow those suggestions, but I highly recommend reading through it.*
 
 You are only required to scrape the talks from the October 2025 conference, but your code should still work even if you switched the URL to a different conference session date. That means **no hardcoding** things that wouldn’t generally work for different conference sessions. Feel free to ask the professor or the TAs if you aren’t sure about what qualifies as hardcoding.
 
@@ -35,7 +36,7 @@ If they enter `1` or `2`, do the following:
 ### Option 1: Scraping General Conference
 1. Using `playwright`, navigate to the October 2025 conference page:
     - `https://www.churchofjesuschrist.org/study/general-conference/2025/10?lang=eng`
-    - When you are setting up a browser with `playwright` using the `.launch()` method, please use `slow_mo=2000` as a parameter/argument pair. That will make it pause 2 seconds between each action. That is just so we aren't overloading the church's website, especially if 100s of students are working on this at the same time.
+    - When you are setting up a browser with `playwright` using the `.launch()` method, please use `slow_mo=2000` as a parameter/argument pair. That will make it pause 2 seconds between each action. That is just so we aren't overloading the church's website, especially if hundreds of students are working on this at the same time.
 2. Access the pages for **all individual talks**
     - **Ignore** pages that just have video recordings, like “Saturday Morning Session”.
     - **Ignore** “Sustaining of General Authorities, Area Seventies, and General Officers” (it isn’t a talk).
@@ -48,6 +49,7 @@ If they enter `1` or `2`, do the following:
         - This is accessed by clicking the "Related Content" button (the one with some dots and lines) near the top right.
         - Every time a book of scripture is mentioned (for example, "1 Nephi") increase the count for that book of scripture.
         - Some talks don't have any "Related Content". Make sure you still grab the speaker's name, title and kicker for those pages though.
+        - In the hints section, we show 2 ways of doing this. We will be lenient when grading if the exact numbers don't match those in the solution excel file. As long as each count is +-5 of the solution file you'll get full credit.
 4. Store the aformentioned info in a copy of the `std_works` dictionary that is provided to you
     - For each talk, create a copy of the dictionary: `std_works_copy = std_works.copy()`
     - Store all the info in the copy of the dictionary, and then append that dictionary to a list. 
@@ -80,7 +82,7 @@ std_works = {
 5. Export the scraped data
     - After you've scraped the page of each talk, turn your list of dictionaries into a pandas DataFrame
     - Then, export your DataFrame to an excel file named `conference_talks_data.xlsx`
-    - Feel free to reference `solution_conference_talks_data.xlsx` for an example of what it should look like when you export the data.
+    - Feel free to reference `solution_conference_talks_data.xlsx` for an example of what it should look like when you export the data (just remember, we'll give you credit as long as your counts are within +- 5 of the example output).
 6. Print:  
    `You've scraped all the conference data.`
 
@@ -150,29 +152,41 @@ The talk(s) that quoted the Doctrine and Covenants the most:
         - To get access to the references, first tell playwright to click the "Related Content" button near the top right corner that has the dots and lines.
         - Once you click it, it should open up a panel on the right side. For a couple of talks, including the first "Introduction" talk, there are no references. Make sure your code doesn't break for those talks. One way to guard against it breaking is to check the `.count()` of an element and see if it is above 0 before trying to scrape data from that element. See class practice file `07` for an example of that.
         - I recommend just grabbing all of the references text in one element and storing it using `.text_content()`
-        - For books like `"1 Nephi"` or `"1 Kings"`, HTML often uses non-breaking spaces between the number and the name instead of regular spaces. For example, if you inspect the references of Elder Stevenson's talk "Blessed are the Peacemakers" you'll notice that `"3 Nephi 12:16"` shows up as `"3@nbsp;Nephi 12:16"`. That makes it so that the `3` and `Nephi` never show up on separate lines. But, to make it easier to count the number of references, you should replace those non-breaking spaces with regular spaces. Here's some code to help you:
+        - For books like `"1 Nephi"` or `"1 Kings"`, HTML often uses non-breaking spaces between the number and the name instead of regular spaces. For example, if you inspect the references of Elder Stevenson's talk "Blessed are the Peacemakers" you'll notice that `"3 Nephi 12:10"` shows up as `"3@nbsp;Nephi 12:10"`.
+        - ![non line breaking space](./media/non-line-breaking%20space.png)
+        - That makes it so that the `3` and `Nephi` never show up on separate lines. But, to make it easier to count the number of references, you should replace those non-breaking spaces with regular spaces. The string method `.replace()` is an easy way to fix that. Here's some code to help you:
             - ```
               related_content_references = page.locator('you figure this part out yourself')
               if related_content_references.count() > 0:
                   references_text = related_content_references.text_content()
-                  references_text = references_text.replace("\u00A0", " ")
+                  references_text = references_text.replace("\u00A0", " ") # replace special spaces with normal spaces
               ```
-        - Once you have the text of the references ready, loop over the the `std_works_copy` dictionary. Each key in that dictionary (after the first 3) is a book of scripture. You can use the `.count()` function on the references text you scraped with each key from the dictionary. That will tell you the number of times each key appears in that string. For example, if you wanted to store how often `Luke` appeared in the references section text, you could do:
+        - Once you have the text of the references ready, loop over the the `std_works_copy` dictionary and count the number of references to each standard work. Each key in that dictionary (after the first 3) is a standard work (book of scripture). Skip the non-book keys: `"Speaker_Name"`, `"Talk_Name"`, `"Kicker"`. You might find `continue` useful for that, but it depends on how you code it.
+        - Because the focus of the project is webscraping, not counting functions, I include code for you to count the references. The solution Excel file used Method 2, since I consider it the most accurate, but either method will be pretty close to each other. As long as your numbers are pretty close (like +- 5) to the solution numbers, you'll get full credit. 1st is `.count()`, the simplest, but least accurate.  2nd is using regular expressions, which are pretty complicated but awesome and allow for really complex pattern matching. If you want to learn more about regex, feel free to look at the `regex_example.py` and ask an AI about how regular expressions work. Its good to have some initial exposure to them. But remember no matter what method you choose, as long as you are within +-5 of the example counts you'll get full credit.
+        - **Method 1: Simple Count**
+            - You can use the `.count()` function on the references text you scraped with each key from the dictionary. That will tell you the number of times each key appears in that string. This one is simplest. The problem is just that if a reference has text like "John was beloved by Jesus" it will count that "John" as a reference. There are also several books of scripture that have overlapping names, like "Mormon" and "Words of Mormon" where it would double count "Mormon". But that doens't actually cause too many miscounts.
             - ```
-              std_works_copy["Luke"] = references_text.count("Luke")
+              # for every standard work, count how often it is in the text
+              for std_work in std_works_copy:
+                  if std_work in ['Speaker_Name', "Talk_Title", "Kicker"]:
+                      continue
+                  std_works_copy[std_work] = references_text.count(std_word)
               ```
-            - But instead of hardcoding in "Luke", just use the keys of the dictionary as you loop through it
-            - Skip the non-book keys: `"Speaker_Name"`, `"Talk_Name"`, `"Kicker"`. You might find `continue` useful for that, but it depends on how you code it.
+        - **Method 2: Regular Expressions (regex)**
+            - This uses regular expressions, which is a syntax for creating and recognizing complex patterns. You can use regular expressions in all languages, not just python. See the `regex_example.py` file if you want some explanation of why it is better than .count()
+            - ```
+              import re # this is the regular expressions library
+              # for every standard work, count how often it is in the text
+              for std_work in std_works_copy:
+                  if std_work in ['Speaker_Name', "Talk_Title", "Kicker"]:
+                      continue
+                  regex_pattern = fr'(?<!\d\s)\b{std_work}\s\d+' # this is a regular expression pattern. See regex_example.py for details
+                  matches = re.findall(regex_pattern, references_text)
+                  std_works_copy[std_work] = len(matches)
+              ```
         - Once all the data is stored, append the `std_works_copy` to a list (and make sure the list is created outside of the loop going through each page).
         - Then, move on to next talk and repeat.
-        - EXTRA STUFF FOR NO EXTRA POINTS:
-            - If you are particularly observant, you might notice a problem with some books of scripture: if there is a reference to `John`, we would also count it for `1 John`, `2 John`, etc.
-            - Honestly, the best way to count references wouldn't be to use `.count()`, but instead use regular expressions for complex pattern matching. Regular expressions would also help get rid of situations where the references text uses a name like "John" in passing, but not as an actual reference to scripture. But I didn't teach you regular expressions. Feel free to look that up if you want and implement a better solution (for no extra points mind you). But we can still get around the first issue by using just `count()`. You just need to subtract any potential double counts before saving the dictionary. If you want to include that code, here's an example below. But because there are no references to `1 John`, `2 John`, `3 John`, `Words of Mormon`, or `Joseph Smith—Matthew` in October 2025's conference, it actually doesn't make any difference in the results for this assignment. But for those of you that want to make it more accurate on principle, here you go:
-            - ```
-              std_works_copy["John"] = std_works_copy["John"] - std_works_copy["1 John"] - std_works_copy["2 John"] - std_works_copy["3 John"]
-              std_works_copy["Mormon"] = std_works_copy["Mormon"] - std_works_copy["Words of Mormon"]
-              std_works_copy["Matthew"] = std_works_copy["Matthew"] - std_works_copy["Joseph Smith—Matthew"] 
-              ```
+        - When you've gotten through all the talks, you should have a list of dictionaries, with each dictionary having the data from that talk.
 5. Exporting the data
     - Import `pandas` and put the list with all the dictionaries into `df = pd.DataFrame(your_list_here)`
     - Use `.to_excel()` to export the dataframe to an Excel file. Make sure you include `index=False` to leave out the index numbers that pandas always adds to the data.
@@ -284,15 +298,15 @@ Enter an option: 2
 These are the top 10 most quoted standard works in October 2025 conference:
 
 Doctrine and Covenants    108
-Alma                       61
-John                       56
+Alma                       59
 Matthew                    54
+John                       54
 Mosiah                     38
 3 Nephi                    33
 2 Nephi                    31
 Moroni                     30
 Luke                       18
-Isaiah                     16
+1 Nephi                    16
 dtype: int64
 
 
@@ -301,6 +315,7 @@ The talk(s) that quoted the Doctrine and Covenants the most:
                  Speaker_Name                     Talk_Title  Doctrine and Covenants
 3   Elder Ronald M. Barcellos  The Lord Looketh on the Heart                       9
 10       Elder Kevin G. Brown  The Eternal Gift of Testimony                       9 
+
 
 
 Menu:

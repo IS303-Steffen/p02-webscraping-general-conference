@@ -5,7 +5,7 @@
 # std_works_copy = std_works.copy()
 std_works = {
     'Speaker_Name': "",
-    'Talk_Name': "",
+    'Talk_Title': "",
     'Kicker': "",
     'Matthew': 0, 'Mark': 0, 'Luke': 0, 'John': 0, 'Acts': 0, 'Romans': 0,
     '1 Corinthians': 0, '2 Corinthians': 0, 'Galatians': 0, 'Ephesians': 0,
