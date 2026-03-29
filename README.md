@@ -8,11 +8,11 @@
 > **Note:** Currently, the project requires scraping just the **October 2025** general conference. This is because there are a couple of quirks (some talks not making any references to external sources) that make the scraping task a little more complicated, which is great practice for other realistic scraping tasks.
 
 ## Libraries Required
-- If you are using a virtual environment, you can install all necessary external libraries by running `pip install -r requirements.txt` in the terminal.
 - `playwright`
 - `pandas`
 - `openpyxl`
     - you don't need to import this one, but it needs to be installed on your computer for pandas to export and import Excel files.
+- If you are using a virtual environment, you can install all necessary external libraries by running `pip install -r requirements.txt` in the terminal.
 
 ## Logical Flow
 There are many ways to do this project, and all that matters is that you fulfill the requirements.
@@ -130,7 +130,7 @@ The talk(s) that quoted the Doctrine and Covenants the most:
 1. Using `playwright`, navigate to the October 2025 conference page:
     - see the solutions from the class practice for examples on setting this up.
 2. Access the pages for **all individual talks**
-    - Try right clicking the list of talks on the content page and inspect the elements that contain each talk section. You might find something that makes it easy to tell the talks apart from the other links. There are other potential ways to only grab talks too. Do what makes the most sense.
+    - Try right clicking the list of talks on the content page and inspect the elements that contain each talk section. You might find something that makes it easy to tell the talks apart from the other links. There are other potential ways to only grab talks too. Do what makes the most sense to you.
     - Make sure you aren't just finding every `<a>` element on the whole page. The page has lots of other `<a>` elements that link to things other than the talks.
     - For navigating to each talk's page, you have at least 2 strategies:
         1. Use `playwright`'s `.click()` method to click on an individual talk, then scrape the data your need, and then go back to the contents page. Then click on the next talk and repeat the process until you've clicked on all of the talks. Like file `05` from the class practice
@@ -162,7 +162,7 @@ The talk(s) that quoted the Doctrine and Covenants the most:
                   references_text = references_text.replace("\u00A0", " ") # replace special spaces with normal spaces
               ```
         - Once you have the text of the references ready, loop over the the `std_works_copy` dictionary and count the number of references to each standard work. Each key in that dictionary (after the first 3) is a standard work (book of scripture). Skip the non-book keys: `"Speaker_Name"`, `"Talk_Name"`, `"Kicker"`. You might find `continue` useful for that, but it depends on how you code it.
-        - Because the focus of the project is webscraping, not counting functions, I include code for you to count the references. The solution Excel file used Method 2, since I consider it the most accurate, but either method will be pretty close to each other. As long as your numbers are pretty close (like +- 5) to the solution numbers, you'll get full credit. 1st is `.count()`, the simplest, but least accurate.  2nd is using regular expressions, which are pretty complicated but awesome and allow for really complex pattern matching. If you want to learn more about regex, feel free to look at the `regex_example.py` and ask an AI about how regular expressions work. Its good to have some initial exposure to them. But remember no matter what method you choose, as long as you are within +-5 of the example counts you'll get full credit.
+        - Because the focus of the project is webscraping, not counting functions, I include code for you to count the references. The solution Excel file used Method 2, since it is more accurate, but either method will be pretty close to each other. As long as your numbers are pretty close (like +- 5) to the solution numbers, you'll get full credit. 1st is `.count()`, the simplest, but least accurate.  2nd is using regular expressions, which are pretty complicated but awesome and allow for really complex pattern matching. If you want to learn more about regex, feel free to look at the `regex_example.py` and ask an AI about how regular expressions work. Its good to have some initial exposure to them. But remember no matter what method you choose, as long as you are within +-5 of the example counts you'll get full credit.
         - **Method 1: Simple Count**
             - You can use the `.count()` function on the references text you scraped with each key from the dictionary. That will tell you the number of times each key appears in that string. This one is simplest. The problem is just that if a reference has text like "John was beloved by Jesus" it will count that "John" as a reference. There are also several books of scripture that have overlapping names, like "Mormon" and "Words of Mormon" where it would double count "Mormon". But that doens't actually cause too many miscounts.
             - ```
@@ -205,7 +205,7 @@ The talk(s) that quoted the Doctrine and Covenants the most:
           continue
       ```
 2. Summary data
-    - The focus of this project is the webscraping. To save you time, here's the code that will get you the summary analysis you need. Read through the comments and try to understand what each piece is doing. Also note that if you forgot to exclude the index column when you exported your DataFrame to an excel file, you'd need to change the `3` in the first part to a `4` to account for the extra column.
+    - The focus of this project is the webscraping, and in this class, we don't focus on data analytics, but I think seeing an example of how you could combine webscraping tools with some data analytics is useful for you. To save you time, here's the code that will get you the summary analysis you need. Read through the comments and try to understand what each piece is doing. Also note that if you forgot to exclude the index column when you exported your DataFrame to an excel file, you'd need to change the `3` in the first part to a `4` to account for the extra column.
     - ```
       # df.columns[3:] gets you the all the column names from index 3 on
       # .sum() will calculate the sum for each of those columns

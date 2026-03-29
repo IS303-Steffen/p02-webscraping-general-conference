@@ -20,9 +20,7 @@ example_references_section = (
 
 
 for std_work in std_works_short_example:
-    # r before a string makes it a string literal, that means the backslashes \
-    # aren't used as escape characters, instead they are interpreted as regular
-    # expression patterns. Then we also add f so we can stick the std_work in.
+    # see the explanation at the end of this file for what eac part of this pattern means.
     regex_pattern = fr'(?<!\d\s)\b{std_work}\s\d+'
 
     # re is included in the python standard libary, so no need to download it.
@@ -31,7 +29,58 @@ for std_work in std_works_short_example:
     matches = re.findall(regex_pattern, example_references_section)
     num_of_matches = len(matches)
     print(f"For {std_work}: there are this many valid references using regex: {num_of_matches}")
+
+    # notice how the counts are off from when we use .count()
     num_counts_using_count = example_references_section.count(std_work)
     print(f"For {std_work}: the .count() function found this many: {num_counts_using_count}")
 
+# ================================
+# EXPLANAITON OF THE REGEX PATTERN
+# ================================
 
+# This regex pattern is used to match a specific phrase followed by a number,
+# with some conditions about what can come before it.
+#
+# fr'(?<!\d\s)\b{std_work}\s\d+'
+#
+# Breakdown:
+#
+# fr'' 
+# - This is a formatted raw string:
+#   - 'f' allows {std_work} to be dynamically inserted into the pattern.
+#   - 'r' ensures backslashes are treated literally (important for regex).
+#
+# (?<!\d\s)
+# - Negative lookbehind assertion:
+# - Ensures that the match is NOT immediately preceded by:
+#   - a digit (\d)
+#   - followed by a space (\s)
+# - In other words, it prevents matches like "3 <your pattern>"
+#
+# \b
+# - Word boundary:
+# - Ensures the match starts at the beginning of a word
+#   (prevents partial matches inside larger words).
+#
+# {std_work}
+# - A variable inserted into the regex (via the f-string).
+# - This represents the specific word or phrase you want to match.
+#
+# \s
+# - Matches a single whitespace character (usually a space).
+#
+# \d+
+# - Matches one or more digits.
+# - This means the pattern expects a number after the space.
+#
+# Overall:
+# - Matches: "<std_work> <number>"
+# - Example: "Matthew 5"
+#
+# - But will NOT match if it's immediately preceded by something like:
+#   "5 Matthew 5"
+# - The purpose of that is so that something like "1 John 5:10" only counts for
+#   the "1 John" standard work, but not the "John" standard work.
+#
+# So this pattern finds standalone occurrences of a word/phrase followed by a number,
+# while excluding cases where it looks like part of a numbered list or similar format.
